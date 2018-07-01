@@ -132,7 +132,37 @@ class dynamic_proggramming():
             pos +=1
             self._matrix_chain_multiplication(position, lists, length, mat, pos)
 
+    def knapsack_problem(self,weight_value,weight):
+        position=[]
+        weight_value = sorted(weight_value)
+        rows =len(weight_value)
+        columns =weight+1
+        matrix = self.create_matrix(columns,rows)
+        for row in range(rows):
+            for col in range(columns):
+                if row ==0:
+                    if weight_value[row][0] <= col:
+                        matrix[row][col] = weight_value[row][1]
+                elif col < weight_value[row][0]:
+                    matrix[row][col]=matrix[row-1][col]
+                else:
+                    matrix[row][col]= max(weight_value[row][1]+matrix[row-1][col-weight_value[row][0]],matrix[row-1][col])
+        self._parent_pointer_knapsack(matrix,weight_value,rows-1,columns-1,position)
+        print('The maximum value packed in bag are ',matrix[rows-1][columns-1])
+        print('The items in bag are of weight ', position)
 
+    def _parent_pointer_knapsack(self,mat,weight_value,row,col,position):
+        if row < 0:
+            return
+        elif mat[row][col] == mat[row-1][col]:
+            row= row-1
+            self._parent_pointer_knapsack(mat,weight_value,row,col,position)
+        elif mat[row][col] != mat[row-1][col]:
+            position.append(weight_value[row][0])
+            col = col - weight_value[row][0]
+            row = row-1
+            self._parent_pointer_knapsack(mat, weight_value, row, col, position)
+            
 #-- minimum edit distance problem implementation.
 #a= 'abcdef'
 #b='azced'
@@ -145,8 +175,12 @@ class dynamic_proggramming():
 #x= dynamic_proggramming()
 #x.longest_palindrome_subsequence(a)
 
-#------------- fastest matrix chain multiplication----
+#------------- fastest matrix chain multiplication----------------------------
+#a =[[2,3],[3,6],[6,4],[4,5]]
+#x= dynamic_proggramming()
+#x.matrix_chain_multiplication(a)
 
-a =[[2,3],[3,6],[6,4],[4,5]]
+#--------------- knapsack problem ---------------------------------------------
+lists= [[1,1],[3,4],[4,5],[5,7],[10,10]]
 x= dynamic_proggramming()
-x.matrix_chain_multiplication(a)
+x.knapsack_problem(lists,weight=20)
